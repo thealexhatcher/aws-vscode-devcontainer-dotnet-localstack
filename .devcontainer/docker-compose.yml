@@ -1,0 +1,52 @@
+version: '2.1'
+
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4567-4597:4567-4597"
+      - "${PORT_WEB_UI-9090}:${PORT_WEB_UI-8080}"
+    environment:
+      - SERVICES=${SERVICES- }
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=${DATA_DIR- }
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+
+  vscode:
+    build: .
+    user: "vscode"
+    command: sleep infinity 
+    environment:
+      - AWS_APIGATEWAY_ENDPOINT=http://localstack:4567
+      - AWS_KINESIS_ENDPOINT=http://localstack:4568
+      - AWS_DYNAMODB_ENDPOINT=http://localstack:4569
+      - AWS_DYNAMODB_STREAMS_ENDPOINT=http://localstack:4570
+      - AWS_ELASTICSEARCH_ENDPOINT=http://localstack:4571
+      - AWS_S3_ENDPOINT=http://localstack:4572
+      - AWS_FIREHOSE_ENDPOINT=http://localstack:4573
+      - AWS_LAMBDA_ENDPOINT=http://localstack:4574
+      - AWS_SNS_ENDPOINT=http://localstack:4575
+      - AWS_SQS_ENDPOINT=http://localstack:4576
+      - AWS_REDSHIFT_ENDPOINT=http://localstack:4577
+      - AWS_ES_ENDPOINT=http://localstack:4578
+      - AWS_SES_ENDPOINT=http://localstack:4579
+      - AWS_ROUTE53_ENDPOINT=http://localstack:4580
+      - AWS_CLOUDFORMATION_ENDPOINT=http://localstack:4581
+      - AWS_CLOUDWATCH_ENDPOINT=http://localstack:4582
+      - AWS_SSM_ENDPOINT=http://localstack:4583
+      - AWS_SECRETSMANAGER_ENDPOINT=http://localstack:4584
+      - AWS_STEPFUNCTIONS_ENDPOINT=http://localstack:4585
+      - AWS_CLOUDWATCHLOGS_ENDPOINT=http://localstack:4586
+      - AWS_CLOUDWATCHEVENTS_ENDPOINT=http://localstack:4587
+      - AWS_STS_ENDPOINT=http://localstack:4592
+      - AWS_IAM_ENDPOINT=http://localstack:4593
+      - AWS_EC2_ENDPOINT=http://localstack:4597
+    volumes:
+      - ..:/workspace
+    links:
+      - localstack
+    healthcheck:
+      disable: true
